@@ -14,3 +14,7 @@ Our main objective for this project is to create a ROS2 interface that interacts
 - Enable end effector opening/closing
 - Change operating modes
 - Sensory input from sensors 
+
+
+## Video test 
+<video src='https://www.youtube.com/watch?v=vvThzcBfnyc' width=180/>
