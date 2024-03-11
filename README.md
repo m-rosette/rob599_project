@@ -24,8 +24,11 @@ Instructions go here.
 
 ## Move Dynamixels 
 In one terminal run:
-    ros2 run dynamixel_sdk_examples motor_interface
+
+          ros2 run dynamixel_sdk_examples motor_interface
+          
 In another terminal run:
+
        ros2 service call /set_operating_mode dynamixel_sdk_custom_interfaces/srv/SetOperatingMode "{operating_mode: 0, id: 1, 
        operation_target: 40}"
 
