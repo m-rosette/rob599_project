@@ -10,7 +10,7 @@ Our main objective for this project is to create a ROS2 interface that interacts
 ![setup](https://github.com/m-rosette/rob599_project/assets/92352927/36eaef62-c3d8-42ac-a75a-b328b78e153b)
 
 
-##Functionality 
+## Functionality 
 - Enable end effector opening/closing
 - Change operating modes
 - Sensory input from sensors 
