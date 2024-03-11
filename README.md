@@ -32,5 +32,7 @@ In another terminal run:
     ros2 service call /set_operating_mode dynamixel_sdk_custom_interfaces/srv/SetOperatingMode "{operating_mode: 0, id: 1, 
     operation_target: 40}"
 
-    
+## Video Test 
+![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
+
 
