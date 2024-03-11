@@ -17,4 +17,5 @@ Our main objective for this project is to create a ROS2 interface that interacts
 
 
 ## Video test 
-<video src='https://www.youtube.com/watch?v=vvThzcBfnyc' width=180/>
+<video src='https://www.youtube.com/watch?v=Ti3mHhCc1Jg' width=180/>
+
