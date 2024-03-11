@@ -36,3 +36,8 @@ In another terminal run:
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
 
 
+https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
+
+
+
+
