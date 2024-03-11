@@ -16,6 +16,9 @@ Our main objective for this project is to create a ROS2 interface that interacts
 - Sensory input from sensors 
 
 
-## Video test 
-<video src='https://www.youtube.com/watch?v=Ti3mHhCc1Jg' width=180/>
+## Installation 
+Instructions go here.
+
+## Move Linear Actuator 
+    ros2 run Arduino arduino_control
 
