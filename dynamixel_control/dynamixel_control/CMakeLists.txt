@@ -23,9 +23,18 @@ ament_target_dependencies(motor_interface
   rclcpp
 )
 
+add_executable(motor_interface_client src/motor_interface_client.cpp)
+ament_target_dependencies(motor_interface_client
+  dynamixel_sdk_custom_interfaces
+  dynamixel_control_msgs
+  dynamixel_sdk
+  rclcpp
+)
+
 # Install
 install(TARGETS
   motor_interface
+  motor_interface_client
   DESTINATION lib/${PROJECT_NAME}
 )
 
