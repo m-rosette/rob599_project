@@ -17,7 +17,7 @@ import threading
 class Record(Node):
     def __init__(self):
         super().__init__('record')
-        self.storage_directory = '/home/kaky/ros2_ws_project_ws/src/rob599_project/ros2_contactile_sensors/sensor_test/resources'
+        self.storage_directory = '/home/kaky/rob599_project/rob599_project/gripper/resources'
 
         self.mutex = threading.Lock()
         self.r = self.create_rate(20)
@@ -34,7 +34,7 @@ class Record(Node):
         self.record_server.start()
         self.get_logger().info("Everything up!")
 
-        self.storage_directory = '/home/kaky/ros2_ws_project_ws/src/rob599_project/ros2_contactile_sensors/sensor_test/resources'
+        self.storage_directory = '/home/kaky/rob599_project/rob599_project/gripper/resources'
 
     def action_callback(self, goal_handle):
         self.file_name = goal_handle.file_name
@@ -45,7 +45,7 @@ class Record(Node):
         combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
         self.mutex.release()
 
-        with open('/home/kaky/ros2_ws_project_ws/src/rob599_project/ros2_contactile_sensors/sensor_test/resources' + str(self.file_name) + '.csv', 'w') as csvfile:
+        with open('/home/kaky/rob599_project/rob599_project/gripper/resources' + str(self.file_name) + '.csv', 'w') as csvfile:
             # Write the header
             w = csv.DictWriter(csvfile, combined_dict)
             w.writeheader()
