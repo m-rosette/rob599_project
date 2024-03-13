@@ -23,6 +23,8 @@ Instructions go here.
     ros2 run Arduino arduino_control
 
 ## Move Dynamixels 
+
+Let's first test your dynamixels by running the following commands. Note this is for a single dynamixel (XW540-T260-R)
 In one terminal run:
 
     ros2 run dynamixel_sdk_examples motor_interface
@@ -31,6 +33,16 @@ In another terminal run:
 
     ros2 service call /set_operating_mode dynamixel_sdk_custom_interfaces/srv/SetOperatingMode "{operating_mode: 0, id: 1, 
     operation_target: 40}"
+To move two dynamixels at a time you will run the following: 
+In one terminal run:
+     
+     ros2 run dynamixel_control dual_motor_interface
+This will activate dual motor interface. 
+In another terminal run:
+
+    ros2 run dynamixel_control dual_motor_client <operating_mode> <operation_target>
+    
+You have a few options for the operating mode and target. If you want to use position control mode, then type 3. For current control mode type 0. The operating target for current control is numbers between 25-100 and for the position they are 50-500. 
 
 ## Video Test 
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
