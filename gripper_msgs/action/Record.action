@@ -1,8 +1,8 @@
-#goal
+# goal
 string file_name
 ---
-#result
+# result
 bool result
 ---
-#feedback
+# feedback
 bool status

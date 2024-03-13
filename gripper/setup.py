@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'record=sensor_test2.record:main',
+            'record=gripper.record:main',
         ],
     },
 )

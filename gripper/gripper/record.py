@@ -4,11 +4,11 @@ from rclpy.node import Node
 from std_msgs.msg import String, Int64
 import os
 import numpy as np
-from papillarray_ros_v2.msg import SensorState
+from sensor_interfaces.msg import SensorState
 from time import sleep
 import csv
 from collections import OrderedDict
-from sensor_test2_interfaces.action import Record
+from gripper_msgs.action import Record
 from rclpy.action import ActionServer
 from copy import deepcopy as copy
 import threading
@@ -17,7 +17,7 @@ import threading
 class Record(Node):
     def __init__(self):
         super().__init__('record')
-        self.storage_directory = '/home/kaky/rob599_project/rob599_project/gripper/resources'
+        self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/gripper/resource/'
 
         self.mutex = threading.Lock()
         self.r = self.create_rate(20)
@@ -30,11 +30,11 @@ class Record(Node):
         self.tactile_1_sub = self.create_subscription(SensorState, 'hub_0/sensor_1', self.tactile_1_callback, 10)
 
         # Create action server
-        self.record_server = ActionServer(self, "record_server", Record, execute_callback=self.action_callback, auto_start=False)
-        self.record_server.start()
+        self.record_server = ActionServer(self, Record, "record_server", self.action_callback)
+        # self.record_server.start()
         self.get_logger().info("Everything up!")
 
-        self.storage_directory = '/home/kaky/rob599_project/rob599_project/gripper/resources'
+        # self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/gripper/resource/'
 
     def action_callback(self, goal_handle):
         self.file_name = goal_handle.file_name
@@ -42,10 +42,11 @@ class Record(Node):
 
         # Combine all of the data into one dictionary
         self.mutex.acquire()
-        combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
+        combined_dict = OrderedDict(copy(self.tactile_0).items() + copy(self.tactile_1).items())
+        # combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
         self.mutex.release()
 
-        with open('/home/kaky/rob599_project/rob599_project/gripper/resources' + str(self.file_name) + '.csv', 'w') as csvfile:
+        with open(self.storage_directory + str(self.file_name) + '.csv', 'w') as csvfile:
             # Write the header
             w = csv.DictWriter(csvfile, combined_dict)
             w.writeheader()
@@ -53,7 +54,8 @@ class Record(Node):
             while rclpy.ok():
                 # Combine all of the data into one dictionary
                 self.mutex.acquire()
-                combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
+                combined_dict = OrderedDict(copy(self.tactile_0).items() + copy(self.tactile_1).items())
+                # combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
                 self.mutex.release()
                 w.writerow(combined_dict)
                 self.r.sleep()
@@ -108,7 +110,7 @@ class Record(Node):
         Initializes all of the keys in each ordered dictionary. This ensures the header and order is correct even if recording starts before data is published.
         """
         # Position
-        self.position = OrderedDict({'gripper_pos': None})
+        # self.position = OrderedDict({'gripper_pos': None})
         # Tactile sensor
         self.tactile_0 = OrderedDict()
         self.tactile_1 = OrderedDict()
@@ -152,13 +154,20 @@ class Record(Node):
             return np.max(numbers)
         except:
             return 0
+        
 
 def main(args=None):
+    # Initialize rclpy
     rclpy.init(args=args)
+
     record = Record()
-    record.main()
+
+    # Give control over to ROS2
     rclpy.spin(record)
+
+    # Shutdown cleanly
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
