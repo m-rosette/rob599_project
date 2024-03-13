@@ -23,6 +23,33 @@ DualMotorClient::DualMotorClient(uint8_t operating_mode, uint32_t operation_targ
   request->id1 = 1; // Assuming motor IDs are 1 and 2
   request->id2 = 2;
   request->operating_mode = operating_mode_;
+
+  // Set bounds for operation_target
+  uint32_t upper_pos_bound = 500;
+  uint32_t lower_pos_bound = 50;
+  uint32_t upper_current_bound = 100;
+  uint32_t lower_current_bound = 10;
+
+  // Check bounds on operation_target (position)
+  if (operating_mode_ == 3 && operation_target1_ > upper_pos_bound) {
+    RCLCPP_WARN(this->get_logger(), "Position upper bound exceeded - capping value. [Goal Position: %d]", upper_pos_bound);
+    operation_target1_ = upper_pos_bound;
+  }
+  else if (operating_mode_ == 3 && operation_target1_ < lower_pos_bound) { 
+    RCLCPP_WARN(this->get_logger(), "Position lower bound exceeded - capping value. [Goal Position: %d]", lower_pos_bound);
+    operation_target1_ = lower_pos_bound;
+  }
+
+  // Check bounds on operation_target (current)
+  if (operating_mode_ == 0 && operation_target1_ > upper_current_bound) {
+    RCLCPP_WARN(this->get_logger(), "Current upper bound exceeded - capping value. [Goal Current: %d]", upper_current_bound);
+    operation_target1_ = upper_current_bound;
+  }
+  else if (operating_mode_ == 0 && operation_target1_ < lower_current_bound) { 
+    RCLCPP_WARN(this->get_logger(), "Current lower bound exceeded - capping value. [Goal Current: %d]", lower_current_bound);
+    operation_target1_ = lower_current_bound;
+  }
+
   request->operation_target1 = operation_target1_;
 
   // Calculate the modified (inverted) operation target for the second motor
