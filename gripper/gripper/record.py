@@ -12,6 +12,7 @@ from gripper_msgs.action import Record
 from rclpy.action import ActionServer
 from copy import deepcopy as copy
 import threading
+import time 
 
 
 class Record(Node):
@@ -21,6 +22,9 @@ class Record(Node):
 
         self.mutex = threading.Lock()
         self.r = self.create_rate(20)
+        #  time component 
+        self.start_time = time.time()
+
 
         # Initialize dictionaries to store data from subscribers
         self.initialize_tactile_dict()
@@ -114,25 +118,31 @@ class Record(Node):
         # Tactile sensor
         self.tactile_0 = OrderedDict()
         self.tactile_1 = OrderedDict()
+        #  edit made by kp for time
+        current_time = time.time()
+        elapsed_time = current_time-self.start_time
+        if elapsed_time > 0:
+            for i in range(8):
+                self.tactile_0['0_dX_'+str(i)] = None
+                self.tactile_0['0_dY_'+str(i)] = None
+                self.tactile_0['0_dZ_'+str(i)] = None
+                self.tactile_0['0_fX_'+str(i)] = None
+                self.tactile_0['0_fY_'+str(i)] = None
+                self.tactile_0['0_fZ_'+str(i)] = None
+                self.tactile_0['0_incontact_'+str(i)] = None
+                self.tactile_0['0_slipstate_'+str(i)] = None
 
-        for i in range(8):
-            self.tactile_0['0_dX_'+str(i)] = None
-            self.tactile_0['0_dY_'+str(i)] = None
-            self.tactile_0['0_dZ_'+str(i)] = None
-            self.tactile_0['0_fX_'+str(i)] = None
-            self.tactile_0['0_fY_'+str(i)] = None
-            self.tactile_0['0_fZ_'+str(i)] = None
-            self.tactile_0['0_incontact_'+str(i)] = None
-            self.tactile_0['0_slipstate_'+str(i)] = None
-
-            self.tactile_1['1_dX_'+str(i)] = None
-            self.tactile_1['1_dY_'+str(i)] = None
-            self.tactile_1['1_dZ_'+str(i)] = None
-            self.tactile_1['1_fX_'+str(i)] = None
-            self.tactile_1['1_fY_'+str(i)] = None
-            self.tactile_1['1_fZ_'+str(i)] = None
-            self.tactile_1['1_incontact_'+str(i)] = None
-            self.tactile_1['1_slipstate_'+str(i)] = None
+                self.tactile_1['1_dX_'+str(i)] = None
+                self.tactile_1['1_dY_'+str(i)] = None
+                self.tactile_1['1_dZ_'+str(i)] = None
+                self.tactile_1['1_fX_'+str(i)] = None
+                self.tactile_1['1_fY_'+str(i)] = None
+                self.tactile_1['1_fZ_'+str(i)] = None
+                self.tactile_1['1_incontact_'+str(i)] = None
+                self.tactile_1['1_slipstate_'+str(i)] = None
+        if elapsed_time == 10:
+            print("its been 10 seconds")
+                
 
         self.tactile_0['0_friction_est'] = None
         self.tactile_0['0_target_grip_force'] = None
