@@ -10,6 +10,7 @@ public:
     explicit MotorInterfaceClient(const std::string & node_name, uint8_t operating_mode, uint32_t operation_target);
 
 private:
+    void sendSetOperatingModeRequests(uint8_t operating_mode, uint32_t operation_target);
     void sendSetOperatingModeRequest(uint8_t id, uint8_t operating_mode, uint32_t operation_target);
 
     rclcpp::Client<dynamixel_control_msgs::srv::SetOperatingMode>::SharedPtr set_operating_mode_client_;

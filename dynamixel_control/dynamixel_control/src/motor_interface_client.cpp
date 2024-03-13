@@ -13,10 +13,17 @@ MotorInterfaceClient::MotorInterfaceClient(const std::string & node_name, uint8_
         RCLCPP_INFO(this->get_logger(), "Service not available, waiting again...");
     }
 
-    // Set operating mode and target for motor 1
-    sendSetOperatingModeRequest(1, operating_mode, operation_target);
+    // Start asynchronous task to send service requests for both motors
+    auto future = std::async(std::launch::async, &MotorInterfaceClient::sendSetOperatingModeRequests, this, operating_mode, operation_target);
 
-    // Set operating mode and target for motor 2
+    // Wait for the future to complete
+    future.wait();
+}
+
+void MotorInterfaceClient::sendSetOperatingModeRequests(uint8_t operating_mode, uint32_t operation_target)
+{
+    // Send service requests for both motors
+    sendSetOperatingModeRequest(1, operating_mode, operation_target);
     sendSetOperatingModeRequest(2, operating_mode, operation_target);
 }
 
@@ -29,7 +36,7 @@ void MotorInterfaceClient::sendSetOperatingModeRequest(uint8_t id, uint8_t opera
     // Calculate the modified (inverted) operation target for the second motor
     uint32_t modified_operation_target = operation_target;
     if (id == 2 && operating_mode == 3) { // If it's the second motor and in position mode
-        modified_operation_target = 4075 - operation_target; // Calculate the modified target position
+        modified_operation_target = 4025 - operation_target; // Calculate the modified target position
     }
     else if (id == 2 && operating_mode == 0) { // If it's the second motor and in position mode
         modified_operation_target = - operation_target; // Make the operation_target negative
@@ -57,14 +64,9 @@ void MotorInterfaceClient::sendSetOperatingModeRequest(uint8_t id, uint8_t opera
 
 int main(int argc, char * argv[])
 {
-    if (argc != 4) {
-        RCLCPP_ERROR(rclcpp::get_logger("motor_interface_client"), "Usage: ros2 run PACKAGE_NAME motor_interface_client OPERATING_MODE OPERATION_TARGET");
-        return 1;
-    }
-
     rclcpp::init(argc, argv);
-    uint8_t operating_mode = std::stoi(argv[2]);
-    uint32_t operation_target = std::stoi(argv[3]);
+    uint8_t operating_mode = std::stoi(argv[1]);
+    uint32_t operation_target = std::stoi(argv[2]);
     auto node = std::make_shared<MotorInterfaceClient>("motor_interface_client", operating_mode, operation_target);
     rclcpp::spin(node);
     rclcpp::shutdown();
