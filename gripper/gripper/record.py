@@ -55,7 +55,11 @@ class Record(Node):
             w = csv.DictWriter(csvfile, combined_dict)
             w.writeheader()
 
-            while rclpy.ok():
+            # while rclpy.ok():
+            # kp changes made 
+            current_time = time.time()
+            elapsed_time = current_time-self.start_time
+            if elapsed_time > 0:
                 # Combine all of the data into one dictionary
                 self.mutex.acquire()
                 combined_dict = OrderedDict(copy(self.tactile_0).items() + copy(self.tactile_1).items())
@@ -63,6 +67,8 @@ class Record(Node):
                 self.mutex.release()
                 w.writerow(combined_dict)
                 self.r.sleep()
+            if elapsed_time == 10:
+                print("its been 10 seconds")
 
             self.record_server.set_preempted()
             self.get_logger().info("Recording stopped.")
@@ -119,30 +125,27 @@ class Record(Node):
         self.tactile_0 = OrderedDict()
         self.tactile_1 = OrderedDict()
         #  edit made by kp for time
-        current_time = time.time()
-        elapsed_time = current_time-self.start_time
-        if elapsed_time > 0:
-            for i in range(8):
-                self.tactile_0['0_dX_'+str(i)] = None
-                self.tactile_0['0_dY_'+str(i)] = None
-                self.tactile_0['0_dZ_'+str(i)] = None
-                self.tactile_0['0_fX_'+str(i)] = None
-                self.tactile_0['0_fY_'+str(i)] = None
-                self.tactile_0['0_fZ_'+str(i)] = None
-                self.tactile_0['0_incontact_'+str(i)] = None
-                self.tactile_0['0_slipstate_'+str(i)] = None
+        
+        for i in range(8):
+            self.tactile_0['0_dX_'+str(i)] = None
+            self.tactile_0['0_dY_'+str(i)] = None
+            self.tactile_0['0_dZ_'+str(i)] = None
+            self.tactile_0['0_fX_'+str(i)] = None
+            self.tactile_0['0_fY_'+str(i)] = None
+            self.tactile_0['0_fZ_'+str(i)] = None
+            self.tactile_0['0_incontact_'+str(i)] = None
+            self.tactile_0['0_slipstate_'+str(i)] = None
 
-                self.tactile_1['1_dX_'+str(i)] = None
-                self.tactile_1['1_dY_'+str(i)] = None
-                self.tactile_1['1_dZ_'+str(i)] = None
-                self.tactile_1['1_fX_'+str(i)] = None
-                self.tactile_1['1_fY_'+str(i)] = None
-                self.tactile_1['1_fZ_'+str(i)] = None
-                self.tactile_1['1_incontact_'+str(i)] = None
-                self.tactile_1['1_slipstate_'+str(i)] = None
-        if elapsed_time == 10:
-            print("its been 10 seconds")
-                
+            self.tactile_1['1_dX_'+str(i)] = None
+            self.tactile_1['1_dY_'+str(i)] = None
+            self.tactile_1['1_dZ_'+str(i)] = None
+            self.tactile_1['1_fX_'+str(i)] = None
+            self.tactile_1['1_fY_'+str(i)] = None
+            self.tactile_1['1_fZ_'+str(i)] = None
+            self.tactile_1['1_incontact_'+str(i)] = None
+            self.tactile_1['1_slipstate_'+str(i)] = None
+        
+
 
         self.tactile_0['0_friction_est'] = None
         self.tactile_0['0_target_grip_force'] = None
