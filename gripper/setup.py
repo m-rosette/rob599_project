@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'record=gripper.record:main',
+            'arduino_control = arduino.arduino_control:main',
         ],
     },
 )
