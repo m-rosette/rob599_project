@@ -35,7 +35,9 @@ In another terminal run:
 ## Videos and .gif
 
 When running both dynamixels this is what should happen.
+
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
+
 Recall each end effector has its own dynamixel,so when you run the dynamixels in current mode to each with the value of 100, you get a 2 finger sucessful grasp. 
 
 
