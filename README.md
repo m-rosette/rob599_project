@@ -23,6 +23,8 @@ Instructions go here.
     ros2 run Arduino arduino_control
 
 ## Move Dynamixels 
+
+Let's first test your dynamixels by running the following commands. Note this is for a single dynamixel (XW540-T260-R)
 In one terminal run:
 
     ros2 run dynamixel_sdk_examples motor_interface
@@ -31,14 +33,35 @@ In another terminal run:
 
     ros2 service call /set_operating_mode dynamixel_sdk_custom_interfaces/srv/SetOperatingMode "{operating_mode: 0, id: 1, 
     operation_target: 40}"
+To move two dynamixels at a time you will run the following: 
+In one terminal run:
+     
+     ros2 run dynamixel_control dual_motor_interface
+This will activate dual motor interface. 
+In another terminal run:
 
-## Videos and .gif
+    ros2 run dynamixel_control dual_motor_client <operating_mode> <operation_target>
+    
+You have a few options for the operating mode and target. If you want to use position control mode, then type 3. For current control mode type 0. The operating target for current control is numbers between 25-100 and for the position they are 50-500. 
 
-When running both dynamixels this is what should happen.
+## Video Test 
+The .gif is of the dynamixels in current mode with a value of 100. This shows the dual motor interface working for the dynamixels. 
 
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
 
-Recall each end effector has its own dynamixel,so when you run the dynamixels in current mode to each with the value of 100, you get a 2 finger sucessful grasp. 
+Recall each end effector has its dynamixel, so when you run the dynamixels in current mode to each with the value of 100, you get a 2-finger successful grasp.
+
+
+The following image is taken to show the force the papillary nodes in the tactile sensor feel when grasping the object. Image is a snip it from what a user would see when taking the user study. The interface is made in PyQt. When the sensors feel a force, the white grids will light up to different shades between black and white to indicate the force they feel. 
+
+![image](https://github.com/m-rosette/rob599_project/assets/92352927/4395f384-e189-41d6-b24d-fa7f6371a590)
+
+
+## Tactile Sensor Hardware Information
+
+Tactile Sensor is from Contactile. The bottom image shows how the sensor functions. 
+![tactile_Sense](https://github.com/m-rosette/rob599_project/assets/92352927/49a77d5d-47df-494a-9dc3-b3763a74083f)
+
 
 
 https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc

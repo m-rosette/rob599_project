@@ -1,3 +1,6 @@
+import os
+from glob import glob
+
 from setuptools import find_packages, setup
 
 package_name = 'gripper'
@@ -10,6 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*launch.[pxy][yma]*'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -21,7 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'record=gripper.record:main',
-            'arduino_control = arduino.arduino_control:main',
+            'record_client=gripper.record_client:main',
         ],
     },
 )

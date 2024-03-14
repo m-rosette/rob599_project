@@ -23,9 +23,45 @@ ament_target_dependencies(motor_interface
   rclcpp
 )
 
+add_executable(motor_interface_client src/motor_interface_client.cpp)
+ament_target_dependencies(motor_interface_client
+  dynamixel_sdk_custom_interfaces
+  dynamixel_control_msgs
+  dynamixel_sdk
+  rclcpp
+)
+
+add_executable(scratch_service_client src/scratch_service_client.cpp)
+ament_target_dependencies(scratch_service_client
+  dynamixel_sdk_custom_interfaces
+  dynamixel_control_msgs
+  dynamixel_sdk
+  rclcpp
+)
+
+add_executable(dual_motor_client src/dual_motor_client.cpp)
+ament_target_dependencies(dual_motor_client
+  dynamixel_sdk_custom_interfaces
+  dynamixel_control_msgs
+  dynamixel_sdk
+  rclcpp
+)
+
+add_executable(dual_motor_interface src/dual_motor_interface.cpp)
+ament_target_dependencies(dual_motor_interface
+  dynamixel_sdk_custom_interfaces
+  dynamixel_control_msgs
+  dynamixel_sdk
+  rclcpp
+)
+
 # Install
 install(TARGETS
   motor_interface
+  motor_interface_client
+  scratch_service_client
+  dual_motor_client
+  dual_motor_interface
   DESTINATION lib/${PROJECT_NAME}
 )
 

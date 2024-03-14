@@ -4,13 +4,11 @@
 #include <memory>
 #include <string>
 
-// #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dynamixel_sdk_custom_interfaces/msg/set_position.hpp"
 #include "dynamixel_sdk_custom_interfaces/srv/get_position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rcutils/cmdline_parser.h"
-
-#include "motor_interface.hpp"
+#include "dual_motor_interface.hpp"
 
 // Control table address for X series (except XL-320)
 #define ADDR_OPERATING_MODE 11
@@ -107,60 +105,97 @@ ReadWriteNode::ReadWriteNode()
 
   auto set_operating_mode_callback =
     [this](
-    const std::shared_ptr<SetOperatingMode::Request> request,
-    std::shared_ptr<SetOperatingMode::Response> response) -> void
+    const std::shared_ptr<DualSetOperatingMode::Request> request,
+    std::shared_ptr<DualSetOperatingMode::Response> response) -> void
     {
       uint8_t dxl_error = 0;
-      uint8_t dxl_id = request->id;
+      uint8_t dxl_id1 = request->id1;
+      uint8_t dxl_id2 = request->id2;
       uint8_t operating_mode = request->operating_mode;
-      uint32_t operation_target = request->operation_target;
+      uint32_t operation_target1 = request->operation_target1;
+      uint32_t operation_target2 = request->operation_target2;
 
-      // Disable Torque of DYNAMIXEL
+    // Disable Torque of DYNAMIXEL
       dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
-        dxl_id,
+        dxl_id1,
+        ADDR_TORQUE_ENABLE,
+        0,
+        &dxl_error
+      );
+      dxl_comm_result = packetHandler->write1ByteTxRx(
+        portHandler,
+        dxl_id2,
         ADDR_TORQUE_ENABLE,
         0,
         &dxl_error
       );
 
-      // Write Operating Mode (length : 1 byte)
+    // Write Operating Mode (length : 1 byte)
       dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
-        dxl_id,
+        dxl_id1,
+        ADDR_OPERATING_MODE,
+        operating_mode,
+        &dxl_error
+      );
+      dxl_comm_result = packetHandler->write1ByteTxRx(
+        portHandler,
+        dxl_id2,
         ADDR_OPERATING_MODE,
         operating_mode,
         &dxl_error
       );
 
-      // Enable Torque of DYNAMIXEL
+    // Enable Torque of DYNAMIXEL
       dxl_comm_result = packetHandler->write1ByteTxRx(
         portHandler,
-        dxl_id,
+        dxl_id1,
+        ADDR_TORQUE_ENABLE,
+        1,
+        &dxl_error
+      );
+      dxl_comm_result = packetHandler->write1ByteTxRx(
+        portHandler,
+        dxl_id2,
         ADDR_TORQUE_ENABLE,
         1,
         &dxl_error
       );
 
+    // Set goal current of DYNAMIXEL
       if (operating_mode == 0) {
-        // Set goal current of DYNAMIXEL
         dxl_comm_result = packetHandler->write2ByteTxRx(
           portHandler,
-          dxl_id,
+          dxl_id1,
           ADDR_GOAL_CURRENT,
-          operation_target,
+          operation_target1,
+          &dxl_error
+        );
+        dxl_comm_result = packetHandler->write2ByteTxRx(
+          portHandler,
+          dxl_id2,
+          ADDR_GOAL_CURRENT,
+          operation_target2,
           &dxl_error
         );
       }
 
+    // Write Goal Position (length : 4 bytes)
+    // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
       if (operating_mode == 3) {
-        // Write Goal Position (length : 4 bytes)
-        // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
         dxl_comm_result = packetHandler->write4ByteTxRx(
           portHandler,
-          dxl_id,
+          dxl_id1,
           ADDR_GOAL_POSITION,
-          operation_target,
+          operation_target1,
+          &dxl_error
+        );
+        dxl_comm_result = packetHandler->write4ByteTxRx(
+          portHandler,
+          dxl_id2,
+          ADDR_GOAL_POSITION,
+          operation_target2,
           &dxl_error
         );
       }
@@ -173,18 +208,18 @@ ReadWriteNode::ReadWriteNode()
         response->success = false;
       } else {
         if (operating_mode == 0) {
-          // RCLCPP_INFO(this->get_logger(), "Operating mode set to: Current");
-          RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Current: %d]", dxl_id, operation_target);
+          RCLCPP_INFO(this->get_logger(), "[ID: %d] [Goal Current: %d]", dxl_id1, operation_target1);
+          RCLCPP_INFO(this->get_logger(), "[ID: %d] [Goal Current: %d]", dxl_id2, operation_target2);
         }
         if (operating_mode == 3) {
-          // RCLCPP_INFO(this->get_logger(), "Operating mode set to: Position");
-          RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", dxl_id, operation_target);
+          RCLCPP_INFO(this->get_logger(), "[ID: %d] [Goal Position: %d]", dxl_id1, operation_target1);
+          RCLCPP_INFO(this->get_logger(), "[ID: %d] [Goal Position: %d]", dxl_id2, operation_target2);
         }
         response->success = true;
       }
     };
 
-  set_operating_mode_service_ = create_service<SetOperatingMode>("set_operating_mode", set_operating_mode_callback);
+  set_operating_mode_service_ = create_service<DualSetOperatingMode>("set_operating_mode", set_operating_mode_callback);
 }
 
 ReadWriteNode::~ReadWriteNode()
