@@ -22,6 +22,7 @@ set(msg_files
 set(srv_files
   # "srv/GetPosition.srv"
   "srv/SetOperatingMode.srv"
+  "srv/DualSetOperatingMode.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
