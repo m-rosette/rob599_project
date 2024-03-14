@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Int64
+from rclpy.action import ActionServer
+
 import os
-import numpy as np
-from sensor_interfaces.msg import SensorState
-from time import sleep
 import csv
 from collections import OrderedDict
-from gripper_msgs.action import Record
-from rclpy.action import ActionServer
-from copy import deepcopy as copy
 import threading
+import time
+
+from sensor_interfaces.msg import SensorState
+from gripper_msgs.action import RecordData
 
 
 class Record(Node):
@@ -20,7 +19,8 @@ class Record(Node):
         self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/gripper/resource/'
 
         self.mutex = threading.Lock()
-        self.r = self.create_rate(20)
+
+        self.sample_rate = 0.05 # seconds
 
         # Initialize dictionaries to store data from subscribers
         self.initialize_tactile_dict()
@@ -30,52 +30,62 @@ class Record(Node):
         self.tactile_1_sub = self.create_subscription(SensorState, 'hub_0/sensor_1', self.tactile_1_callback, 10)
 
         # Create action server
-        self.record_server = ActionServer(self, Record, "record_server", self.action_callback)
-        # self.record_server.start()
+        self.record_server = ActionServer(self, RecordData, "record_server", self.action_callback)
         self.get_logger().info("Everything up!")
 
-        # self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/gripper/resource/'
-
     def action_callback(self, goal_handle):
-        self.file_name = goal_handle.file_name
-        self.get_logger().info("Recording starting. Saving to %s.csv", self.file_name)
+        self.filename = goal_handle.request.filename
+        self.get_logger().info(f"Recording starting. Saving to {self.filename}")
 
-        # Combine all of the data into one dictionary
-        self.mutex.acquire()
-        combined_dict = OrderedDict(copy(self.tactile_0).items() + copy(self.tactile_1).items())
-        # combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
-        self.mutex.release()
-
-        with open(self.storage_directory + str(self.file_name) + '.csv', 'w') as csvfile:
+        with open(self.storage_directory + str(self.filename) + '.csv', 'w') as csvfile:
             # Write the header
-            w = csv.DictWriter(csvfile, combined_dict)
+            w = csv.DictWriter(csvfile, self.combine_dicts().keys())
             w.writeheader()
 
-            while rclpy.ok():
+            while rclpy.ok() and goal_handle.is_active:
                 # Combine all of the data into one dictionary
-                self.mutex.acquire()
-                combined_dict = OrderedDict(copy(self.tactile_0).items() + copy(self.tactile_1).items())
-                # combined_dict = OrderedDict(copy(self.position).items() + copy(self.tactile_0).items() + copy(self.tactile_1).items())
-                self.mutex.release()
+                combined_dict = self.combine_dicts()
                 w.writerow(combined_dict)
-                self.r.sleep()
+                rclpy.spin_once(self)
+                time.sleep(self.sample_rate)
 
-            self.record_server.set_preempted()
-            self.get_logger().info("Recording stopped.")
+            # Handle goal completion or preemption
+            if goal_handle.is_active:
+                goal_handle.succeed()
+                self.get_logger().info("Recording stopped.")
+            else:
+                self.get_logger().info("Recording preempted.")
+
+        # Set goal outcome
+        goal_handle.succeed()
+        self.get_logger().info("File successfully created")
+
+        # Return result
+        return RecordData.Result(result="Saved file")
+
+    def combine_dicts(self):
+        """
+        Combines data from tactile_0 and tactile_1 dictionaries.
+        """
+        combined_dict = OrderedDict()
+        self.mutex.acquire()
+        combined_dict.update(self.tactile_0)
+        combined_dict.update(self.tactile_1)
+        self.mutex.release()
+        return combined_dict
 
     def tactile_0_callback(self, tac_msg):
         # Saves the subscribed tactile 0 data to variable
         self.mutex.acquire()
-        self.tactile_0 = OrderedDict()
         for i in range(8):
-            self.tactile_0['0_dX_'+str(i)] = tac_msg.pillars[i].dX
-            self.tactile_0['0_dY_'+str(i)] = tac_msg.pillars[i].dY
-            self.tactile_0['0_dZ_'+str(i)] = tac_msg.pillars[i].dZ
-            self.tactile_0['0_fX_'+str(i)] = tac_msg.pillars[i].fX
-            self.tactile_0['0_fY_'+str(i)] = tac_msg.pillars[i].fY
-            self.tactile_0['0_fZ_'+str(i)] = tac_msg.pillars[i].fZ
-            self.tactile_0['0_incontact_'+str(i)] = tac_msg.pillars[i].in_contact
-            self.tactile_0['0_slipstate_'+str(i)] = tac_msg.pillars[i].slip_state
+            self.tactile_0[f'0_dX_{i}'] = tac_msg.pillars[i].dx
+            self.tactile_0[f'0_dY_{i}'] = tac_msg.pillars[i].dy
+            self.tactile_0[f'0_dZ_{i}'] = tac_msg.pillars[i].dz
+            self.tactile_0[f'0_fX_{i}'] = tac_msg.pillars[i].fx
+            self.tactile_0[f'0_fY_{i}'] = tac_msg.pillars[i].fy
+            self.tactile_0[f'0_fZ_{i}'] = tac_msg.pillars[i].fz
+            self.tactile_0[f'0_incontact_{i}'] = tac_msg.pillars[i].in_contact
+            self.tactile_0[f'0_slipstate_{i}'] = tac_msg.pillars[i].slip_state
 
         self.tactile_0['0_friction_est'] = tac_msg.friction_est
         self.tactile_0['0_target_grip_force'] = tac_msg.target_grip_force
@@ -87,16 +97,15 @@ class Record(Node):
     def tactile_1_callback(self, tac_msg):
         # Saves the subscribed tactile 1 data to variable
         self.mutex.acquire()
-        self.tactile_1 = OrderedDict()
         for i in range(8):
-            self.tactile_1['1_dX_'+str(i)] = tac_msg.pillars[i].dX
-            self.tactile_1['1_dY_'+str(i)] = tac_msg.pillars[i].dY
-            self.tactile_1['1_dZ_'+str(i)] = tac_msg.pillars[i].dZ
-            self.tactile_1['1_fX_'+str(i)] = tac_msg.pillars[i].fX
-            self.tactile_1['1_fY_'+str(i)] = tac_msg.pillars[i].fY
-            self.tactile_1['1_fZ_'+str(i)] = tac_msg.pillars[i].fZ
-            self.tactile_1['1_incontact_'+str(i)] = tac_msg.pillars[i].in_contact
-            self.tactile_1['1_slipstate_'+str(i)] = tac_msg.pillars[i].slip_state
+            self.tactile_1[f'1_dX_{i}'] = tac_msg.pillars[i].dx
+            self.tactile_1[f'1_dY_{i}'] = tac_msg.pillars[i].dy
+            self.tactile_1[f'1_dZ_{i}'] = tac_msg.pillars[i].dz
+            self.tactile_1[f'1_fX_{i}'] = tac_msg.pillars[i].fx
+            self.tactile_1[f'1_fY_{i}'] = tac_msg.pillars[i].fy
+            self.tactile_1[f'1_fZ_{i}'] = tac_msg.pillars[i].fz
+            self.tactile_1[f'1_incontact_{i}'] = tac_msg.pillars[i].in_contact
+            self.tactile_1[f'1_slipstate_{i}'] = tac_msg.pillars[i].slip_state
 
         self.tactile_1['1_friction_est'] = tac_msg.friction_est
         self.tactile_1['1_target_grip_force'] = tac_msg.target_grip_force
@@ -109,30 +118,27 @@ class Record(Node):
         """
         Initializes all of the keys in each ordered dictionary. This ensures the header and order is correct even if recording starts before data is published.
         """
-        # Position
-        # self.position = OrderedDict({'gripper_pos': None})
-        # Tactile sensor
         self.tactile_0 = OrderedDict()
         self.tactile_1 = OrderedDict()
 
         for i in range(8):
-            self.tactile_0['0_dX_'+str(i)] = None
-            self.tactile_0['0_dY_'+str(i)] = None
-            self.tactile_0['0_dZ_'+str(i)] = None
-            self.tactile_0['0_fX_'+str(i)] = None
-            self.tactile_0['0_fY_'+str(i)] = None
-            self.tactile_0['0_fZ_'+str(i)] = None
-            self.tactile_0['0_incontact_'+str(i)] = None
-            self.tactile_0['0_slipstate_'+str(i)] = None
+            self.tactile_0[f'0_dX_{i}'] = None
+            self.tactile_0[f'0_dY_{i}'] = None
+            self.tactile_0[f'0_dZ_{i}'] = None
+            self.tactile_0[f'0_fX_{i}'] = None
+            self.tactile_0[f'0_fY_{i}'] = None
+            self.tactile_0[f'0_fZ_{i}'] = None
+            self.tactile_0[f'0_incontact_{i}'] = None
+            self.tactile_0[f'0_slipstate_{i}'] = None
 
-            self.tactile_1['1_dX_'+str(i)] = None
-            self.tactile_1['1_dY_'+str(i)] = None
-            self.tactile_1['1_dZ_'+str(i)] = None
-            self.tactile_1['1_fX_'+str(i)] = None
-            self.tactile_1['1_fY_'+str(i)] = None
-            self.tactile_1['1_fZ_'+str(i)] = None
-            self.tactile_1['1_incontact_'+str(i)] = None
-            self.tactile_1['1_slipstate_'+str(i)] = None
+            self.tactile_1[f'1_dX_{i}'] = None
+            self.tactile_1[f'1_dY_{i}'] = None
+            self.tactile_1[f'1_dZ_{i}'] = None
+            self.tactile_1[f'1_fX_{i}'] = None
+            self.tactile_1[f'1_fY_{i}'] = None
+            self.tactile_1[f'1_fZ_{i}'] = None
+            self.tactile_1[f'1_incontact_{i}'] = None
+            self.tactile_1[f'1_slipstate_{i}'] = None
 
         self.tactile_0['0_friction_est'] = None
         self.tactile_0['0_target_grip_force'] = None
@@ -146,15 +152,6 @@ class Record(Node):
         self.tactile_1['1_is_ref_loaded'] = None
         self.tactile_1['1_is_contact'] = None
 
-    def get_start_file_index(self):
-        # Returns the starting file number (old number)
-        current_files = os.listdir(self.storage_directory)
-        try:
-            numbers = np.array([i.split('.csv', 1)[0] for i in current_files], dtype=int)
-            return np.max(numbers)
-        except:
-            return 0
-        
 
 def main(args=None):
     # Initialize rclpy
