@@ -59,6 +59,9 @@ The following image is taken to show the force the papillary nodes in the tactil
 
 ## Tactile Sensor Hardware Information
 
+![tactile_Sense](https://github.com/m-rosette/rob599_project/assets/92352927/49a77d5d-47df-494a-9dc3-b3763a74083f)
+
+
 https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
 
 
