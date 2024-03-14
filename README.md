@@ -52,7 +52,7 @@ The .gif is of the dynamixels in current mode with a value of 100. This shows th
 Recall each end effector has its dynamixel, so when you run the dynamixels in current mode to each with the value of 100, you get a 2-finger successful grasp.
 
 
-The following image is taken to show the force the papillary nodes in the tactile sensor feel when grasping the object. 
+The following image is taken to show the force the papillary nodes in the tactile sensor feel when grasping the object. Image is a snip it from what a user would see when taking the user study. The interface is made in PyQt. 
 
 ![image](https://github.com/m-rosette/rob599_project/assets/92352927/4395f384-e189-41d6-b24d-fa7f6371a590)
 
