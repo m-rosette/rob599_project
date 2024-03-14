@@ -59,6 +59,7 @@ The following image is taken to show the force the papillary nodes in the tactil
 
 ## Tactile Sensor Hardware Information
 
+Tactile Sensor is from Contactile. The bottom image shows how the sensor functions. 
 ![tactile_Sense](https://github.com/m-rosette/rob599_project/assets/92352927/49a77d5d-47df-494a-9dc3-b3763a74083f)
 
 
