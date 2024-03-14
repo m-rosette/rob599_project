@@ -8,7 +8,7 @@ class ArduinoControl(Node):
         super().__init__('arduino_control')
 
         # Define Arduino serial port and baud rate
-        self.arduino_port = '/dev/ttyACM0'   # Change this to the correct port
+        self.arduino_port = '/dev/ttyACM1'   # Change this to the correct port
         self.baudrate = 115200
 
         # Open the serial connection to Arduino

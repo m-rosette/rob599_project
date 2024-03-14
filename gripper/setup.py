@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'record=gripper.record:main',
             'record_client=gripper.record_client:main',
+            'arduino_control=gripper.arduino_control:main',
         ],
     },
 )
