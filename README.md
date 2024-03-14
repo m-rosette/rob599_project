@@ -51,7 +51,7 @@ In one terminal run:
     ros2 launch papillarray_ros2_v2 papillarray
 In another terminal run:
 
-    ros2 run gripper record4
+    ros2 run gripper record
 In another terminal run:
 
     ros2 run gripper record_client
