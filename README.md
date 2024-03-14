@@ -32,8 +32,11 @@ In another terminal run:
     ros2 service call /set_operating_mode dynamixel_sdk_custom_interfaces/srv/SetOperatingMode "{operating_mode: 0, id: 1, 
     operation_target: 40}"
 
-## Video Test 
+## Videos and .gif
+
+When running both dynamixels this is what should happen.
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
+Recall each end effector has its own dynamixel,so when you run the dynamixels in current mode to each with the value of 100, you get a 2 finger sucessful grasp. 
 
 
 https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
