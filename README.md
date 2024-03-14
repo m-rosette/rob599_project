@@ -45,7 +45,12 @@ In another terminal run:
 You have a few options for the operating mode and target. If you want to use position control mode, then type 3. For current control mode type 0. The operating target for current control is numbers between 25-100 and for the position they are 50-500. 
 
 ## Video Test 
+The .gif is of the dynamixels in current mode with a value of 100. This shows the dual motor interface working for the dynamixels. 
+
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
+
+Recall each end effector has its own dynamixel,so when you run the dynamixels in current mode to each with the value of 100, you get a 2 finger sucessful grasp.
+
 
 
 https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
