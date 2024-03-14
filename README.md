@@ -44,6 +44,18 @@ In another terminal run:
     
 You have a few options for the operating mode and target. If you want to use position control mode, then type 3. For current control mode type 0. The operating target for current control is numbers between 25-100 and for the position they are 50-500. 
 
+## Tactile Sensor Saving Feature
+To record tactile data do the following:
+In one terminal run:
+
+    ros2 launch papillarray_ros2_v2 papillarray
+In another terminal run:
+
+    ros2 run gripper record4
+In another terminal run:
+
+    ros2 run gripper record_client
+
 ## Video Test 
 The .gif is of the dynamixels in current mode with a value of 100. This shows the dual motor interface working for the dynamixels. 
 
