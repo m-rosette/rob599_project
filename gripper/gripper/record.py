@@ -7,10 +7,12 @@ import os
 import csv
 from collections import OrderedDict
 import threading
+
 import time
 
 from sensor_interfaces.msg import SensorState
 from gripper_msgs.action import RecordData
+
 
 
 class Record(Node):
@@ -128,7 +130,8 @@ class Record(Node):
         """
         self.tactile_0 = OrderedDict()
         self.tactile_1 = OrderedDict()
-
+        #  edit made by kp for time
+        
         for i in range(8):
             self.tactile_0[f'0_dX_{i}'] = None
             self.tactile_0[f'0_dY_{i}'] = None
