@@ -37,6 +37,14 @@ class Record(Node):
         self.filename = goal_handle.request.filename
         self.get_logger().info(f"Recording starting. Saving to {self.filename}")
 
+        file_path = os.path.join(self.storage_directory, f"{self.filename}.csv")
+
+        # Check if the file already exists
+        if os.path.exists(file_path):
+            self.get_logger().error(f"Error: File '{self.filename}' already exists in the directory. Terminating recording...")
+            goal_handle.abort()
+            return RecordData.Result(result=False)
+
         with open(self.storage_directory + str(self.filename) + '.csv', 'w') as csvfile:
             # Write the header
             w = csv.DictWriter(csvfile, self.combine_dicts().keys())
