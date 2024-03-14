@@ -49,7 +49,13 @@ The .gif is of the dynamixels in current mode with a value of 100. This shows th
 
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
 
-Recall each end effector has its own dynamixel,so when you run the dynamixels in current mode to each with the value of 100, you get a 2 finger sucessful grasp.
+Recall each end effector has its dynamixel, so when you run the dynamixels in current mode to each with the value of 100, you get a 2-finger successful grasp.
+
+
+The following image is taken to show the force the papillary nodes in the tactile sensor feel when grasping the object. 
+
+![image](https://github.com/m-rosette/rob599_project/assets/92352927/4395f384-e189-41d6-b24d-fa7f6371a590)
+
 
 
 
