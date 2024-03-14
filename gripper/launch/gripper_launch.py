@@ -15,9 +15,11 @@ def generate_launch_description():
             package='rob599_project',
             executable='record',
             name='record',
-            
-
-    
+    ),
+        Node(
+            package='rob599_project',
+            executable='arduino_control',
+            name='arduino_control',
     ),
 
 
