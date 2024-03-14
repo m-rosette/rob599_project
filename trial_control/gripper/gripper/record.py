@@ -18,7 +18,7 @@ from gripper_msgs.action import RecordData
 class Record(Node):
     def __init__(self):
         super().__init__('record')
-        self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/gripper/resource/'
+        self.storage_directory = '/home/marcus/classes/rob599/project_ws/src/rob599_project/trial_control/gripper/resource/'
 
         self.mutex = threading.Lock()
 
