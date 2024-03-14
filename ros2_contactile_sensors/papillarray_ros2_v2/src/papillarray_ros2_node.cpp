@@ -1,6 +1,6 @@
 #include "papillarray_ros2_node.hpp"
 
-PapillArrayNode::PapillArrayNode(const rclcpp::NodeOptions &options) : Node("papillarray_ros2_v2_node"), listener_(true) {
+PapillArrayNode::PapillArrayNode(const rclcpp::NodeOptions &options) : Node("papillarray_ros2_v2_node"), listener_(false) {
 	// listener_ argument: isLogging to .csv file; Log file written to /home/.ros/Logs
 
 	RCLCPP_INFO(this->get_logger(), "Loading parameters...\n");
