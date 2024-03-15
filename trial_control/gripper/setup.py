@@ -26,7 +26,8 @@ setup(
         'console_scripts': [
             'record=gripper.record:main',
             'record_client=gripper.record_client:main',
-            'arduino_control=gripper.arduino_control:main',
+            'linear_actuator=gripper.linear_actuator:main',
+            'data_collection=gripper.data_collection:main',
         ],
     },
 )
