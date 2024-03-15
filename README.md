@@ -20,7 +20,21 @@ Our main objective for this project is to create a ROS2 interface that interacts
 Instructions go here.
 
 ## Move Linear Actuator 
+
     ros2 run Arduino arduino_control
+
+To move the linear actuator to different position you want to do the following: 
+
+In one terminal run:
+    
+    ros2 run gripper actuator_linear 
+
+In another terminal run:
+
+    ros2 service call /input_number gripper_msgs/srv/LinearActuator "{location_goal: -1000}"
+
+
+    
 
 ## Move Dynamixels 
 
