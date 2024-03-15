@@ -1,56 +1,44 @@
 import rclpy
 from rclpy.node import Node
+from gripper_msgs.srv import LinearActuator
 import serial
-import time
-import sys
 
-class LinearActuator(Node):
+
+class MoveMe(Node):
     def __init__(self):
-        super().__init__('linear_actuator')
+        super().__init__('actuator_linear')
         self.get_logger().info("Starting linear actuator control")
+        self.srv = self.create_service(LinearActuator, 'input_number', self.input_number_callback)
 
         # Define Arduino serial port and baud rate
         self.arduino_port = '/dev/ttyACM1'   # Change this to the correct port
         self.baudrate = 115200
 
+        # Open the serial connection to Arduino
+        self.arduino = serial.Serial(self.arduino_port, self.baudrate, timeout=1)
+
+    def input_number_callback(self, request, response):
+        self.get_logger().info('Received input_number request')
         try:
-            # Open the serial connection to Arduino
-            self.arduino = serial.Serial(self.arduino_port, self.baudrate, timeout=1)
-        except serial.SerialException as e:
-            self.get_logger().error(f"Failed to open serial port: {str(e)}")
+            # Update response
+            response.success = True
+            self.get_logger().info(f"Got position value: {request.location_goal}")
 
-    # Function to send command to Arduino
-    def send_command(self, command):
-        try:
-            # Send the command to Arduino
-            self.arduino.write(str(command).encode())  
-            self.get_logger().info(f"Sent position command: {command}") 
+            # Send command to arduino
+            self.arduino.write(str(request.location_goal).encode())
 
-            # Wait for Arduino to process the command
-            time.sleep(1)
-        except serial.SerialException as e:
-            self.get_logger().error(f"Failed to send command: {str(e)}")
+        except ValueError:
+            response.success = False
 
-    def close_connection(self):
-        if self.arduino.is_open:
-            self.arduino.close()
-            self.get_logger().info("Serial connection closed.")
+        return response
+    
 
 def main(args=None):
     rclpy.init(args=args)
-
-    linear_actuator = LinearActuator()
-
-    try:
-        command = str(sys.argv[1])
-    except IndexError:
-        command = str(0)
-        linear_actuator.get_logger().warn("Incorrect input. Not moving linear actuator")
-    
-    linear_actuator.send_command(command)
-    linear_actuator.close_connection()
-
+    actuator_linear= MoveMe()
+    rclpy.spin(actuator_linear)
     rclpy.shutdown()
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     main()

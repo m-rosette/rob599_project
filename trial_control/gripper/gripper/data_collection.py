@@ -8,6 +8,7 @@ import os
 import time
 
 from gripper_msgs.action import RecordData
+from gripper_msgs.srv import LinearActuator
 from dynamixel_control_msgs.srv import DualSetOperatingMode
 
 
@@ -24,9 +25,9 @@ class GripperControl(Node):
         # Wait until the server is ready to accept an action request
         self.record_client.wait_for_server()
 
-        # # Create service clients
-        # self.dynamixel_client = self.create_client(DualSetOperatingMode, 'set_operating_mode')
-        # # self.linear_actuator_client = self.create_client(PUT STUFF HERE)
+        # Create service clients
+        self.dynamixel_client = self.create_client(DualSetOperatingMode, 'set_operating_mode')
+        self.linear_actuator_client = self.create_client(LinearActuator, 'input_number')
 
 
 def main(args=None):
@@ -50,26 +51,21 @@ def main(args=None):
     goal.filename = filename
     gripper_control.record_client.send_goal_async(goal)
 
-    # # Move linear actuator forward
-    # desired_position = 1000
-    # gripper_control.linear_actuator_client.send_goal_async(desired_position)
+    # Move linear actuator forward
+    desired_position = -5000
+    linear_actuator_command = 'ros2 service call /input_number gripper_msgs/srv/LinearActuator "{location_goal: -5000}"'
+    os.system(linear_actuator_command)
+    time.sleep(10)
 
     # Close gripper (current mode)
     dynamixel_command = "ros2 run dynamixel_control dual_motor_client 0 65"
     os.system(dynamixel_command)
-    # request = DualSetOperatingMode().Request()
-    # request.id1 = 1
-    # request.id2 = 2
-    # request.operating_mode = 0
-    # request.operation_target1 = 65
-    # gripper_control.dynamixel_client.call_async(request)
 
-    # # Move linear actuator forward
-    # desired_position = 200
-    # gripper_control.linear_actuator_client.send_goal_async(desired_position)    
-
-    # ========================= Temporary ==========================
-    time.sleep(2.5)
+    # Move linear actuator forward
+    desired_position = 5000
+    linear_actuator_command = 'ros2 service call /input_number gripper_msgs/srv/LinearActuator "{location_goal: 5000}"'
+    os.system(linear_actuator_command)
+    time.sleep(10)
 
     # Close gripper (position mode)
     dynamixel_command = "ros2 run dynamixel_control dual_motor_client 3 50"
