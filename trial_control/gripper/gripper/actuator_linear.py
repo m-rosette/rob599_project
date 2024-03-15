@@ -22,7 +22,7 @@ class MoveMe(Node):
         try:
             # number = int(input("Please enter a number: "))
 
-            request = LinearActuator()
+            # request.
             # request.location_goals
 
             # Publish message
@@ -30,16 +30,19 @@ class MoveMe(Node):
             msg.data = str(request.location_goal)
             self.pub.publish(msg)
 
-            #Update response
+            # #Update response
             response.success = True
-            response.message = 'Number received and published successfully.'
+            # response.message = 'Number received and published successfully.'
+
+            self.get_logger().info(f"Got position value: {request.location_goal}")
 
             # Send command to arduino
             self.arduino.write(str(request.location_goal).encode())
 
         except ValueError:
+            # pass
             response.success = False
-            response.message = 'Invalid input. Please enter a valid integer.'
+            # response.message = 'Invalid input. Please enter a valid integer.'
         return response
     
 
