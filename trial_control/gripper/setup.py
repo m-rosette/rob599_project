@@ -27,7 +27,8 @@ setup(
             'record=gripper.record:main',
             'record_client=gripper.record_client:main',
             'arduino_control=gripper.arduino_control:main',
-            'linear_actuator=gripper.linear_actuator:main'
+            'linear_actuator=gripper.linear_actuator:main',
+            'actuator_linear= gripper.actuator_linear:main',
         ],
     },
 )
