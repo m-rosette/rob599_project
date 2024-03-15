@@ -34,12 +34,12 @@ def generate_launch_description():
             name='record',
         ),
 
-        # # Start the linear actuator control
-        # Node(
-        #     package='gripper',
-        #     executable='arduino_control',
-        #     name='arduino_control',
-        # ),
+        # Start the linear actuator control
+        Node(
+            package='gripper',
+            executable='linear_actuator',
+            name='linear_actuator',
+        ),
 
         # # Start the dual dynamixel motor client
         # Node(
