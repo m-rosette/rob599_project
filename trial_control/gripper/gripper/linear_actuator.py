@@ -4,7 +4,6 @@ import serial
 import time
 import sys
 
-
 class LinearActuator(Node):
     def __init__(self):
         super().__init__('linear_actuator')
@@ -14,21 +13,28 @@ class LinearActuator(Node):
         self.arduino_port = '/dev/ttyACM1'   # Change this to the correct port
         self.baudrate = 115200
 
-        # Open the serial connection to Arduino
-        self.arduino = serial.Serial(self.arduino_port, self.baudrate, timeout=1)
+        try:
+            # Open the serial connection to Arduino
+            self.arduino = serial.Serial(self.arduino_port, self.baudrate, timeout=1)
+        except serial.SerialException as e:
+            self.get_logger().error(f"Failed to open serial port: {str(e)}")
 
     # Function to send command to Arduino
     def send_command(self, command):
-        # Send the command to Arduino
-        self.arduino.write(command.encode())  
-        self.get_logger().info(f"Sent position command: {command}") 
+        try:
+            # Send the command to Arduino
+            self.arduino.write(str(command).encode())  
+            self.get_logger().info(f"Sent position command: {command}") 
 
-        # Wait for Arduino to process the command
-        time.sleep(1)                   
+            # Wait for Arduino to process the command
+            time.sleep(1)
+        except serial.SerialException as e:
+            self.get_logger().error(f"Failed to send command: {str(e)}")
 
-        # Close the serial connection
-        self.arduino.close()
-
+    def close_connection(self):
+        if self.arduino.is_open:
+            self.arduino.close()
+            self.get_logger().info("Serial connection closed.")
 
 def main(args=None):
     rclpy.init(args=args)
@@ -37,14 +43,14 @@ def main(args=None):
 
     try:
         command = str(sys.argv[1])
-    except:
+    except IndexError:
         command = str(0)
         linear_actuator.get_logger().warn("Incorrect input. Not moving linear actuator")
     
     linear_actuator.send_command(command)
+    linear_actuator.close_connection()
 
     rclpy.shutdown()
-
 
 if __name__ == "__main__":
     main()
