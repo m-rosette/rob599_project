@@ -104,7 +104,9 @@ Tactile Sensor is from Contactile. The bottom image shows how the sensor functio
 
 ## Final Video 
 
-https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
+https://github.com/m-rosette/rob599_project/assets/92352927/b42fc1a6-66b1-4dcb-a3f1-4789c937f315
+
+
 
 
 
