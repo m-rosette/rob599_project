@@ -19,6 +19,19 @@ Our main objective for this project is to create a ROS2 interface that interacts
 ## Installation 
 Instructions go here.
 
+
+## Full System 
+The following commands will run up all the features meaning the linear actuator, both dynamixels and the tactile sensors. If you want to move things individually you can look past this section.
+
+Launch the following in a terminal: 
+
+    ros2 launch gripper gripper_launch.py
+
+In another terminal run:
+
+    ros2 run gripper data_collection <filename>
+This will run the main data collection code.
+
 ## Move Linear Actuator 
 
     ros2 run Arduino arduino_control
