@@ -83,7 +83,7 @@ In another terminal run:
 
     ros2 run gripper record_client
 
-## Video Test 
+## Video Test
 The .gif is of the dynamixels in current mode with a value of 100. This shows the dual motor interface working for the dynamixels. 
 
 ![2finger_gif](https://github.com/m-rosette/rob599_project/assets/92352927/c845ac8a-5005-477b-9b5d-3c359d829ca4)
@@ -102,6 +102,7 @@ Tactile Sensor is from Contactile. The bottom image shows how the sensor functio
 ![tactile_Sense](https://github.com/m-rosette/rob599_project/assets/92352927/49a77d5d-47df-494a-9dc3-b3763a74083f)
 
 
+## Final Video 
 
 https://github.com/m-rosette/rob599_project/assets/92352927/ff6847ef-660b-4223-83da-df95547ecabc
 
