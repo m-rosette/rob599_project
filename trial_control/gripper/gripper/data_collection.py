@@ -14,11 +14,11 @@ from dynamixel_control_msgs.srv import DualSetOperatingMode
 
 # Linear actuator positions (value: negative = forward, positive = backward)
 BACKWARD_POS = 0
-FORWARD_POS = -10000
+FORWARD_POS = -30000
 
 # Dynamixel current (torque) variables
 CURRENT_MODE = 0
-CLOSE_CURRENT = 65
+CLOSE_CURRENT = 70
 UPPER_CURRENT_BOUND = 100
 LOWER_CURRENT_BOUND = 10
 
@@ -147,12 +147,16 @@ def main(args=None):
     # Send the filename to the record action (starts recording)
     gripper_control.save_tactile_data(filename)
 
+    # Make sure gripper is open (position mode)
+    gripper_control.get_logger().info("Opening gripper")
+    gripper_control.send_dual_motor_request(POSITION_MODE, FULLY_OPEN_POS)
+
     # Move linear actuator forward
     gripper_control.get_logger().info("Moving linear actuator forward")
-    gripper_control.send_linear_actuator_request(FORWARD_POS)
+    gripper_control.send_linear_actuator_request(-20000)
 
     # Allow time for the linear actuator to move
-    time.sleep(11)
+    time.sleep(15)
 
     # Close gripper (current mode)
     gripper_control.get_logger().info("Closing gripper")
@@ -160,10 +164,10 @@ def main(args=None):
 
     # Move linear actuator backward
     gripper_control.get_logger().info("Moving linear actuator backward")
-    gripper_control.send_linear_actuator_request(BACKWARD_POS)
+    gripper_control.send_linear_actuator_request(0)
 
     # Allow time for the linear actuator to move
-    time.sleep(11)
+    time.sleep(15)
 
     # Open gripper (position mode)
     gripper_control.get_logger().info("Opening gripper")
